@@ -1,4 +1,4 @@
-#More References
+## More References
 
 This workshop is about the basics of the R, a programming language for statistical analysis and graphics. This workshop will provide an overview of the RStudio interface, basic R syntax, and how to use loops, functions and packages in R. First-time users are welcome!
 
