@@ -4,9 +4,13 @@ This workshop is about the basics of the R, a programming language for statistic
 
 
 https://cran.r-project.org/doc/contrib/Torfs+Brauer-Short-R-Intro.pdf
+
 ftp://cran.r-project.org/pub/R/doc/contrib/Paradis-rdebuts_en.pdf
+
 http://manuals.bioinformatics.ucr.edu/home/programming-in-r#TOC-Introduction
+
 http://www3.nd.edu/~steve/Rcourse/Lecture1v2.pdf
+
 http://www.stat.cmu.edu/~fienberg/Stat36-315/SomeFundamentalsofR.pdf
 
 
