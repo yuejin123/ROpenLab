@@ -1,0 +1,193 @@
+Data Wrangling using R
+========================================================
+author: Yue Jin
+date: Feb 15 2017
+width: 1200
+height: 900
+
+```{r global_options, include=FALSE}
+set.seed(5)
+knitr::opts_chunk$set(fig.width=7, fig.height=5,warning=FALSE, message=FALSE)
+
+```
+
+
+What is Data Wrangling?
+========================================================
+<br>
+<br>
+Data wrangling is the art of cleaning the data and converting it into a format that allows analysis and reveals insights. It includes
+- Subsetting data: selecting, filtering
+- Transforming Data: re-ordering, re-shaping, etc. 
+- Aggregating data: grouping, summarising
+
+
+Why Use tidyr & dplyr?
+========================================================
+<br>
+<br>
+- Simple **verb** functions that correspond to the most common data manipulation tasks
+- Contrained options, easier to remember/read
+- Faster than base R
+
+
+Functions Covered
+========================================================
+<br>
+Packages utilized
+```{r}
+library(dplyr)
+library(tidyr)
+```
+- tidyr: 
+gather( ); 
+spread( ); 
+separate( ); 
+unite( )
+- dplyr: 
+select( ); 
+filter( ); 
+arrange( );
+mutate( )
+group_by( ); 
+summarise( ); 
+
+
+What is a tidy dataset?
+========================================================
+- Each variable is saved in its own column
+- Each observation is saved in its own row
+<br>
+**Good Example**
+```{r echo=FALSE}
+library(tidyr)
+mess1<-c(rep("Sex",3),rep("Age",2),rep("Sex",3))
+mess2<-c("F","F","M",12,15,"F","M","F")
+mess0<-c("A","B","C","B","C","D","E","F")
+df<-data.frame(cbind(mess0,mess1,mess2))
+spread(df,key=mess1,value=mess2)
+```
+***
+**Bad example**
+```{r echo=FALSE}
+df
+```
+
+Reshaping Data - spread()
+========================================================
+```{r echo=FALSE}
+df
+```
++ A key value pair is a simple way to record information. A pair contains two parts: a key that explains what the information describes, and a value that contains the actual information. (Sex - F/M; Age - 12,15,...)
+
+***
++ spread() distributes a pair of key:value columns into a field of cells. The unique values of the key column become the column names of the field of cells.
+```{r}
+spreaded<-spread(df, key=mess1, value=mess2)
+spreaded
+```
+
+Reshaping Data - gather()
+========================================================
++ gather() does the reverse; it collects a set of column names and places them into a single "key" column. It also collects the cells of those columns and places them into a single value column. 
+```{r}
+gather(spreaded,"info","value",2:3)
+```
+
+```{r include=FALSE}
+# To use gather(), pass it the name of a data frame to reshape. Then pass gather() a character string to use for the name of the "key" column that it will make, as well as a character string to use as the name of the value column that it will make. Finally, specify which columns gather() should collapse into the key value pair (here with integer notation).
+```
+
+
+Reshaping Data - separate() & unite()
+========================================================
+separate() turns a single character column into multiple columns.
+```{r echo=F}
+df1 <- data.frame(x = c("c;d;1", "a;b;2", "a;d;3", "b;c;4"))
+df1
+```
+
+```{r}
+separate(df1, x, c("A","B","C"), sep=";")
+```
+
+```{r include=F}
+separated<-separate(df1,x,c("A","B","C"),sep=";")
+```
+
+***
+unite() combines multiple columns into a single column.
+```{r warning=FALSE, message=FALSE}
+unite(separated,"AC", c(1,3), sep=";")
+```
+
+
+Example: us_stat_population
+========================================================
+<br>
+```{r}
+library(historydata)
+state.pop<- tbl_df(us_state_populations)
+head(us_state_populations,2)
+```
+Tibbles are data frames, and it encapsulates best practices for data frames.<br>
+[For more information](http://r4ds.had.co.nz/tibbles.html)
+
+
+Subsetting data - select(); filter(); 
+========================================================
+```{r}
+pop_yr <- select(state.pop, state, year, population)
+ny <- filter(pop_yr, state=='New York')
+head(ny,5)
+```
+
+Re-ordering Data - arrange()
+========================================================
++ Sort columns in ascending or descending order
+```{r warning=FALSE, message=FALSE}
+current<-arrange(state.pop,desc(population))
+head(current,5)
+```
+
+Aggregating Data - mutate()
+========================================================
+Create a new column by manipulating existing columns
+```{r}
+pop_dens <- mutate(current, pop_density = population / 54556)
+```
+
+
+Aggregating Data - group_by(); summarise()
+========================================================
++ Quickly and easily calculate summary statistics over groups of variables
++ Similar to tapply() in base R, but better at applying several functions to several different variables in a data frame
++ summarise(), gives out summary statistics
+```{r}
+by_state <- group_by(pop_yr, state)
+head(summarise(by_state, avg_pop = mean(population), max_pop = max(population)))
+
+```
+
+
+
+
+%>% Operator
+========================================================
+Pop operator (and then) will forward a value, or the result of an expression, into the next function call/expression, enabling you to perform multiple functions on your datasets in a batch.
++ Makes your code more legible
++ Streamline your workflow
+```{r}
+state.pop %>%
+    select(state, year, population) %>%
+    arrange(desc(year)) %>%
+    filter(state=='New York') %>% 
+    mutate(pop_density = population / 54556) %>%
+    head(3)
+```
+
+Other functions
+=====
++ join(): similar to vlookup in Excel
++ count(): Count number of rows with each unique value of variable
++ distinct(): find unique values in a table

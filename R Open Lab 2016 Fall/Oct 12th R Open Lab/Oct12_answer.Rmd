@@ -1,0 +1,41 @@
+---
+title: "openLab_Oct12_answer"
+output: html_document
+---
+
+## Relationship between Car Weight and Miles Per Gallon?
+```{r}
+plot(mtcars$wt, mtcars$mpg, xlab="Car Weight",ylab="Miles Per Gallon")
+```
+
+
+## What's the difference between weekly sales during holiday and non-holiday?
+```{r}
+play_store<-data.frame(read.table("store.csv",header=TRUE,sep=","))
+attach(play_store)
+plot(play_store$Weekly_Sales, type="l", lty=5,col=2,xlab="Time", ylab="Weekly Sales",main="Weekly Sales - Walmart")
+densityplot(~Weekly_Sales|IsHoliday)
+```
+
+## Explore info dataset
+```{r}
+play_info<-data.frame(read.table("info.csv",header=TRUE,sep=","))
+attach(play_info)
+## Relationship between CPI and Fuel Price?
+plot(Fuel_Price~CPI, type="l",xlab="CPI", ylab="Fuel_Price",main="Fuel_Price - CPI")
+
+CPI_new<-CPI[is.na(CPI)==FALSE]
+Fuel_new<-Fuel_Price[is.na(CPI)==FALSE]
+plot(Fuel_new~CPI_new, type="l",xlab="CPI", ylab="Fuel_Price",main="Fuel_Price - CPI")
+
+
+## Relationship between CPI and Unemployment?
+idx<-which(is.na(CPI)==FALSE & CPI>200)
+Unemp_new<-Unemployment[idx]
+CPI_new2<-CPI[idx]
+plot(Unemp_new~CPI_new2) #Still not good enough. How shall we improve?
+
+## Relationship between Fuel price and holiday?
+densityplot(~Fuel_Price|IsHoliday)
+
+```

@@ -1,0 +1,50 @@
+---
+title: "openLab_02/01"
+author: "Yue Jin"
+date: "02/01/2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+## Why do we use R Markdown?
+R Markdown provides a reproducible document framework for data science, and you can use a single R Markdown file to 
+
+* save and execute codes
+* generate high quality reports that can be shared with an audience; make formatting much easier
+    + for example: $\hat{y_i}$ =  $\hat{\beta}_0$+ $\hat{\beta}_1{x_i}$
+* interactive content: shiny app
+
+## Create a R Markdown file
+* insert chunk (Windows: Ctrl + Alt + I Mac: Cmd + Option + I)
+* chunk options
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+* plot
+```{r echo=FALSE}
+one <- c(1:50)
+four <- (1:50)*0.8+0.3
+plot(four~one)
+plot(four~one, xlim=c(1,50), ylim=range(four), pch=10)
+plot(four~one, xlim=range(one), ylim=range(four), pch=16,col=3)
+title('Random Plot')
+abline(a=0,b=1,col=1)
+
+library(DAAG)
+data(tinting)
+attach(tinting)
+colnames(tinting)
+densityplot(~age|sex*target)
+xyplot(csoa ~ it|sex*agegp, data=tinting)
+table(agegp, sex)
+
+
+```
+
+
+## Different output formats
+* Notebook
+* Presentation
+* Dashboard
+* Interactive documents: shiny, htmlwidgets

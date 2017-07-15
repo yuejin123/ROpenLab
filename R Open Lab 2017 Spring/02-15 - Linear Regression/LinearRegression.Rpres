@@ -1,0 +1,145 @@
+Simple Linear Regression using R
+========================================================
+author: Yue Jin
+date: Feb 15 2017
+
+```{r global_options, include=FALSE}
+set.seed(5)
+knitr::opts_chunk$set(fig.width=7, fig.height=5,warning=FALSE, message=FALSE)
+
+```
+
+
+What is Simple Linear Regression
+========================================================
+
+Simple linear regression is an approach for modeling the **relationship** between a response variable, denoted y and a predictor variable, denoted x.
+- Continuous variable
+- Only one predictor variable is used
+- Examples: height and weight; sales and advertising dollars; GDP and Personal Expenditure
+
+Relationship between Two Economic Accounts
+========================================================
+<br>
+```{r, echo=FALSE, fig.width = 11, fig.height=5}
+data<-read.table("download.csv",sep=",",header=TRUE)
+colnames(data)<-c("Year","GDP","Retail")
+par(las=1)
+plot(data$Retail~data$GDP,data,type="p",main="Relationship between GDP and Retail Sales ($B)",cex=1,cex.axis=1,family="sans",ylab="Retail",xlab="GDP")
+```
+
+
+Basic Model
+========================================================
+<br><br>
+True Model
+- ${y_i}$ = ${\beta}_0$ + ${\beta}_1{x_i}$
+
+Best fitting line
+- $\hat{y_i}$ =  $\hat{\beta}_0$+ $\hat{\beta}_1{x_i}$
+- ${y_i}$- $\hat{y_i}$ = ${\epsilon_i}$
+- ${\beta}_0$ and ${\beta}_1$ are called coefficient, ${\epsilon_i}$ is called prediction/residual error
+
+Finding the Best Fitting Line
+========================================================
+<br><br>
+A line that fits the data best will be one for which the **overall** prediction errors are as small as possible. One way to achieve this goal is to through minimizing the sum of the squared prediction errors.
+<br><br>
+\[Q = \sum_{i=1}^n ({y_i}- \hat{y_i})^2\]
+
+
+How to do it in R?
+========================================================
+```{r, fontsize=10}
+head(data,2)
+fit<-lm(data$Retail~data$GDP); fit
+```
+
+Overview of our model
+========================================================
+<style>
+
+/* slide titles */
+.reveal h3 { 
+  font-size: 70px;
+}
+
+/* heading for slides with two hashes ## */
+.reveal .slides section .slideContent h2 {
+   font-size: 40px;
+   font-weight: bold;
+}
+
+/* ordered and unordered list styles */
+
+
+.reveal pre code {
+  overflow: visible;
+  max-height: none;
+  font-size: 1.1em;
+}
+
+</style>
+```{r, fontsize=9}
+summary(fit)
+```
+
+
+Assumptions of Simple Linear Regression
+========================================================
+<br>
+- Linear relationship between response variable and predictor variable
+- The errors, ${\epsilon_i}$, at each value of predictor, are independent
+- ${\epsilon_i}$ are normally distributed.
+- ${\epsilon_i}$ identically distributed, i.e. have equal variance
+
+Linearity Diagnostics
+========================================================
+```{r}
+plot(fit$residuals~fit$fitted,xlab="Fitted Values",ylab="Residuals")
+```
+- If the residual does not have pattern across predictors, the relationship between two variables is believed to be linear.
+
+Error Independence Diagnostics
+========================================================
+```{r}
+library(car)
+durbinWatsonTest(fit$residuals)
+```
+The Durbin-Watson statistic tests autocorrelation. It is always between 0 and 4. A value of **2** means that there is no autocorrelation in the sample. Values approaching **0** indicate positive autocorrelation and values toward **4** indicate negative autocorrelation.
+
+
+Error Normality Diagnostics
+========================================================
+
+A qq plot is a plot of the **quantiles** of the a data set against the quantiles of the other data set. 
+If the plotted points fall closely onto the identity line, the data is believed to come from the normal distribution.
+
+```{r, fig.width=7,fig.length=3,center=T}
+qqnorm(fit$residuals, main="QQ Plot")
+qqline(fit$residuals)
+```
+
+Error Equal Variance Dignostics
+========================================================
+If the spread-level plot displays a straight line. It means there's no heteroskedasticity.
+
+```{r, fig.width=7,fig.length=3,center=T}
+spreadLevelPlot(fit)
+```
+
+How Good is Our model?
+========================================================
+```{r, fig.width=10,fig.length=5}
+plot(data$Retail~data$GDP,data,type="p",main="Relationship between GDP and Retail Sales ($B)",cex=1,cex.axis=1,family="sans",ylab="Retail",xlab="GDP")
+abline(a=fit$coef[1],b=fit$coef[2])
+```
+
+A bit about Multivariate Linear Regression
+========================================================
+```{r, fig.width=10,fig.length=5}
+plot(data$Retail~data$GDP,data,type="p",main="Relationship between GDP and Retail Sales ($B)",cex=1,cex.axis=1,family="sans",ylab="Retail",xlab="GDP")
+x2<-(data$GDP)^2
+fit2<-lm(data$Retail~data$GDP+x2)
+lines(data$GDP,fit2$fitted,col=2)
+```

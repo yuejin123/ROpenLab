@@ -1,0 +1,112 @@
+---
+title: "openLab_Oct12"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Global setting
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=5, fig.height=5,warning=FALSE, message=FALSE)
+setwd("/Users/yuejin/Downloads")
+```
+
+## Simple plotting
+```{r}
+one <- c(1:50)
+four <- (1:50)*0.8+0.3
+plot(four~one)
+plot(four~one, xlim=c(1,50), ylim=range(four), pch=10)
+plot(four~one, xlim=range(one), ylim=range(four), pch=16,col=3,main="random plot")
+title('Random Plot')
+abline(a=0,b=1,col=1)
+?abline
+filename = 'R OpenLab Oct 12'
+dev.copy(device=png, file=filename, height=600, width=800)
+dev.off()
+
+theta <- (1:50)*0.92
+plot(theta, sin(theta),xlab=expression(sqrt(theta)),col=colors()[1:50])
+help(expression)
+dev.off()
+```
+
+##Different kinds of plots
+```{r}
+library(datasets)
+data(mtcars)
+attach(mtcars)
+?mtcars
+colnames(mtcars)
+summary(mtcars)
+str(mtcars)
+plot(wt, mpg,main="Milage vs. Car Weight",xlab="Weight", ylab="Mileage", pch=18, col="blue")
+text(wt, mpg, row.names(mtcars), cex=0.6, pos=4, col="red")
+dev.off()
+
+library(lattice)
+hist(wt)
+densityplot(~mpg,main="Density Plot",xlab="Miles per Gallon")
+barplot(wt)
+
+
+```
+
+
+# Relationship between housing power and Miles Per Gallon?
+```{r}
+#Practice
+```
+
+
+## How to represent categorial data?
+```{r}
+library(DAAG)
+data(tinting)
+attach(tinting)
+colnames(tinting)
+densityplot(~age|sex*target)
+xyplot(csoa ~ it|sex*agegp, data=tinting)
+table(agegp, sex)
+
+example(bwplot)
+example(qqmath)
+
+store <- read.table("store.csv",sep=",",header=TRUE)
+info <- read.table("info.csv",sep=",",header=TRUE) 
+
+head(store)
+a[3]<-NULL
+```
+
+
+# What's the difference between weekly sales during holiday and non-holiday?
+```{r, echo=FALSE}
+# Plot overall weekly sales first. Set axis labels and title. Set color to red. 
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Throwback to Excel file import
+```{r}
+library(gdata) 
+help(read.xls)      
+```
+
+
+# Explore features of info dataset
+
+## Relationship between CPI and Fuel Price? 
+
+## Relationship between CPI and Unemployment?
+
+## Relationship between Fuel price and holiday?
+
+### Topics next week
+1. How to combine the two dataset?
+2. How to extract data for each store?
+3. How to represent categorial data (Markdown)?
+4. How to handle NA?
