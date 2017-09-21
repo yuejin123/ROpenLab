@@ -6,7 +6,10 @@ Interactive visualization allows deeper exploration of data and better communica
 
 ## Reference
 www.datacamp.com/courses/ggvis-data-visualization-r-tutorial
+
 https://www.r-bloggers.com/interactive-visualizations-with-r-a-minireview/
+
 http://rpubs.com/Porxy/11454
+
 https://github.com/ajlyons/rpres_css/blob/master/Top%20Five%20CSS%20Customizations%20for%20RPres.Rpres
 
