@@ -3,7 +3,7 @@
 Data visualization is an important step of data exploration and presentation. ggplot2 package provides a mature and consistent system for plotting in R. 
 
 1. Why do we use ggplot2?
-2. What a€™re the advantages and drawbacks of ggplot
+2. What are the advantages and drawbacks of ggplot
 3. Syntax and usage
 
 
