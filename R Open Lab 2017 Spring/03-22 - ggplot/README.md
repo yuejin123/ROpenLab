@@ -1,4 +1,4 @@
-#ggplot
+# ggplot
 
 Data visualization is an important step of data exploration and presentation. ggplot2 package provides a mature and consistent system for plotting in R. 
 
@@ -7,7 +7,7 @@ Data visualization is an important step of data exploration and presentation. gg
 3. Syntax and usage
 
 
-##Further Reference about ggplot2
+## Further Reference about ggplot2
 
 ggplot2 cheatsheet
 https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
