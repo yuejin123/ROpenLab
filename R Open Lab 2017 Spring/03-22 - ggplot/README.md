@@ -8,6 +8,7 @@ Data visualization is an important step of data exploration and presentation. gg
 
 
 ##Further Reference about ggplot2
+
 ggplot2 cheatsheet
 https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
 
@@ -27,6 +28,7 @@ http://library.columbia.edu/research/workshops.html
 ## For first-time users:
 
 * Download and install (you will need both R and RStudio):
+
 R for Mac OS X
 <https://cran.rstudio.com/bin/macosx/R-3.3.2.pkg>
 R for Windows
@@ -40,9 +42,11 @@ R Studio for Windows
 To install swirl, first install R if you haven?t already and open it. 
 
 In the command line, type
+
 install.packages("swirl")
 
 and hit Enter. You need a working internet connection. Once R has installed the package, you also need to load it. Type
+
 library(swirl)
 
 and hit Enter. Once you do that, swirl will take over and start giving you instructions (and peppy feedback!) to take you through the basics of R. Have fun!
