@@ -2,9 +2,6 @@
 # Faster and gives more convenient output: Base R vs Tibble family
 # Use a better strategy for guessing column types.
 
-# tibble data format: Use a better strategy for guessing column types.
-
-
 # read_csv(): comma separated (CSV) files
 data<-read_csv("ranking.csv",skip=1)
 

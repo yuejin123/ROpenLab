@@ -1,5 +1,5 @@
 ## Basic Functionality of stringr
-# Character manipulation: allow you to manipulate the individual characters inside the strings inside character vectors.
+# Character manipulation: allow you to manipulate the individual characters inside the strings as character vectors.
 # Pattern matching functions:  recognise pattern description
 
 ## Character manipulation
@@ -7,6 +7,7 @@
 library(stringr)
 x <- c("abcdef", "ghifjk")
 str_length(x)
+# starting from 1
 str_sub(x, 3, 3)
 
 
@@ -18,6 +19,7 @@ strings <- c(
   "Work: 579-499-7527; Home: 543.355.3679"
 )
 phone <- "([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})"
+# [- .] means either of three. 
 # return T/F: detects the presence or absence of a pattern in the elements of list
 str_detect(strings, phone)
 
@@ -30,8 +32,9 @@ str_subset(strings, phone)
 
 # str_match() extracts capture groups formed by () from the first match. 
 # It returns a character matrix with one column for the complete match and one column for each group.
+# group is denoted by () in the pattern
 str_match(strings, phone)
-str_match_all(strings, phone)
+str_match_all(strings, phone) #return a list
 
 # locates the first position of a pattern 
 # returns a numeric matrix with columns start and end. 

@@ -1,0 +1,216 @@
+---
+title: "Interactive Visualization in R"
+subtitle: http://rpubs.com/yuejin/267188
+author: "Yue Jin yj2360@columbia.edu"
+date: "4/12/2017"
+output: 
+  ioslides_presentation:
+    code_folding: hide
+    css: shiny-slides.css
+---
+
+```{r global_options, include=FALSE}
+library(plotly)
+library(ggplot2)
+require(devtools)
+install_github('rCharts', 'ramnathv')
+set.seed(5)
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+## Goals of Interactive Visualization
+
+- Typically meant to be shared for a larger audience (usually through html, RMarkdown, Shiny)
+- Enable customized data exploration experience through linking/interactivity
+- Review findings in and across multiple dimensions
+- Visualize data trending through animation
+
+## Examples of Interactive Vis in R
+```{r echo=FALSE}
+kd <- with(MASS::geyser, MASS::kde2d(duration, waiting, n = 50))
+plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% add_surface()
+
+```
+
+## Examples of Interactive Vis in R
+```{r echo=FALSE}
+library(quantmod)
+
+# Download some data
+getSymbols(Symbols = c("AAPL", "MSFT"))
+
+ds <- data.frame(Date = index(AAPL), AAPL[,6], MSFT[,6])
+
+p <- plot_ly(ds, x = ~Date) %>%
+  add_lines(y = ~AAPL.Adjusted, name = "Apple") %>%
+  add_lines(y = ~MSFT.Adjusted, name = "Microsoft") %>%
+  layout(
+    title = "Stock Prices",
+    xaxis = list(
+      rangeselector = list(
+        buttons = list(
+          list(
+            count = 3,
+            label = "3 mo",
+            step = "month",
+            stepmode = "backward"),
+          list(
+            count = 6,
+            label = "6 mo",
+            step = "month",
+            stepmode = "backward"),
+          list(
+            count = 1,
+            label = "1 yr",
+            step = "year",
+            stepmode = "backward"),
+          list(
+            count = 1,
+            label = "YTD",
+            step = "year",
+            stepmode = "todate"),
+          list(step = "all"))),
+
+      rangeslider = list(type = "date")),
+
+    yaxis = list(title = "Price"))
+
+p
+```
+
+
+## How to Create Effective Interactive Visualization
+* Define the message you want to communicate (simple and specific)
+* Structure your visualization
+    + Macro view: the entire set of data
+    + Micro view: detailed information/ explanations of a single data point
+    + Customized view: customizations enabled in your plot
+* Add Interactivity
+    + Choose gestures
+    + Define trigger behaviors
+    + Animated elements (reveal trending)
+* Stylize
+
+
+
+## Plotly {#small}
+#### Plotly is a JavaScript-based library that enables interactive plotting, and it also includes a ggplotly() function to turn graphs created with ggplot2 interactive.
+<div class="notes">
+ggplot2-one of the best static visualization packages in R
+ggvis – interactive plots from the makers of ggplot2
+rCharts – R interface to multiple javascript charting libraries
+plotly – convert ggplot2 figures to interactive plots easily
+</div>
+
+```{r}
+d <- diamonds[sample(nrow(diamonds), 1000), ] 
+p <- ggplot(data = d, aes(x = carat, y = price)) +
+  geom_point(aes(text = paste("Clarity:", clarity))) + facet_wrap(~ cut)
+ggplotly(p,height=350)
+```
+
+## Plotly
+- https://plot.ly/r/reference/ https://plot.ly/python/reference/
+```{r}
+df <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/2011_us_ag_exports.csv")
+df$hover <- with(df, paste(state, '<br>', "Beef", beef, "Dairy", dairy, "<br>",
+                           "Fruits", total.fruits, "Veggies"))
+l <- list(color = toRGB("white"), width = 2)
+g <- list(scope = 'usa', projection = list(type = 'aitoff'), showlakes = TRUE)
+plot_ly(df,  type = 'choropleth', z = ~total.exports, text = ~hover, 
+    locations = ~code, locationmode = ~'USA-states', # map state code to state locations
+    marker = ~list(line = l), 
+    color = ~total.exports, colorbar = ~list(title = "Millions USD"),
+    height=300) %>%
+    layout(title = '2011 US Agriculture Exports by State', geo = g)
+```
+
+
+## rCharts
+- Need to install rCharts from github using the devtools package
+- Supports multiple javascript charting libraries
+- Share through chart$publish('mychart', host = 'rpubs') or Shiny or html
+**NVD3**
+```{r results = 'asis'}
+require(rCharts)
+data(economics, package = 'ggplot2')
+ecm <- reshape2::melt(economics[,c('date', 'uempmed', 'psavert')], id = 'date')
+p <- nPlot(value ~ date, group = 'variable', data = ecm, type = 'lineWithFocusChart')
+p$set(height=200)
+p$print('mychart', include_assets = TRUE, cdn = TRUE)
+```
+
+## rCharts
+**Highcharts**
+```{r results="asis"}
+h1 <- Highcharts$new()
+h1$chart(type = "spline")
+h1$series(data = c(1, 3, 2, 4, 5, 4, 6, 2, 3, 5, 4, 7), dashStyle = "longdash", name='2011')
+h1$series(data = c(NA, 4, 1, 3, 4, 2, 9, 1, 2, 3, 4, 3), dashStyle = "shortdot", name='2012')
+h1$series(data = c(4, 6, 7, 8, 6, 2, 9, 4, 3, 6, 7, NA), dashStyle = "longdot", name='2013')
+h1$xAxis(categories = 1:12); h1$legend(symbolWidth = 80)
+h1$set(height = 300)
+h1$print('mychart2', include_assets = TRUE, cdn = TRUE)
+```
+
+## Grammar of Graphics
+###**A grammar of graphics provides a structure to combine graphical elements into figures that display data in a meaningful way**
+### **Building blocks of a graph include:**
+- data
+- coordinate system: cartesian, polar
+- geometric object: marks you used to represent data (points, line, bins)
+- aesthetic mapping: visual property of the objects in the plot, anything you can see (location, shape, size)
+- statistical transformations: mean, median
+
+<div class="notes">
+Different types of graphs may, at first glance, appear completely distinct. But in fact, graphs share many common elements, such as coordinate systems and using geometric shapes to represent data. By making different visual choices (Cartesian or polar coordinates, points or lines or bars to represent data), you can use graphs to highlight different aspects of the same data. For example, here are three ways of displaying the same data:
+</div>
+
+
+## Grammar of Graphics
+- data, coordinate system, geometric object, aesthetic mapping, statistical transformation
+
+```{r echo=FALSE, fig.width = 10, fig.height = 8}
+
+# define linear histogram
+library(ggplot2)
+ggplot(data = diamonds, aes(x = price)) +
+    geom_histogram() + 
+    scale_x_log10()
+```
+
+## ggvis
+ggvis combines:
+1) a grammar of graphics from ggplot2
+2) reactive programming from shiny
+3) data transformation pipelines from dplyr
+
+```{r results="markup"}
+library(ggvis)
+
+mtcars %>%
+  ggvis(x = ~wt, y = ~mpg, size.hover := 200,
+        stroke := NA, stroke.hover := "red", strokeWidth := 3) %>%
+  layer_points() %>%
+  set_options(height=300)
+```
+
+## Similarities between plotly, rcharts and ggvis
+### All of them 
+- based on JavaScript
+- compatible with RMarkdown
+- in an early development phase (limited functionality and control over graphical elements)
+
+## Differences between plotly, rcharts and ggvis
+
+- plotly – convert ggplot2 figures to interactive plots easily
+- rCharts – R interface to multiple javascript charting libraries; syntax used varies between different types of charts
+- ggvis – interactive plots from the makers of ggplot2, use %>%, does not support map
+
+## Other available packages
+* googleVis – use Google Chart Tools from R, well-documented, relatively mature
+* d3Network package - cool interactive network visualizations
+
+
+
+

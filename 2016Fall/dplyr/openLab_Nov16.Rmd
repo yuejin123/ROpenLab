@@ -5,7 +5,7 @@ output:
   html_notebook: default
 ---
 
-# Deplyr
+# Dplyr
 ```{r}
 install.packages("dplyr")
 library(dplyr)
