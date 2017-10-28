@@ -1,0 +1,131 @@
+---
+title: "ggplot for R Open Lab"
+author: "Yue Jin"
+date: "10/24/2017"
+output: html_document
+---
+
+## What ggplot2 can do and can not do?
+* gg stands for grammar of graphics. ggplot2 is consistent with grammar of graphics. 
+* ggplot cannot do 3D graphic and interactive graphics. (use plotly along with ggplot)
+
+## Grammar of Graphics
+
+A grammar of graphics provides a structure to combine graphical elements into figures that display data in a meaningful way. Building blocks of a graph include:
+* data
+* coordinate system: cartesian, polar
+* geometric object: marks you used to represent data (points, line, bins)
+* aesthetic mapping: visual property of the objects in the plot, anything you can see (location, shape, size)
+* statistical transformations: mean, median
+
+## How does ggplot work?
+* Every graph is composed of a data set, a coordinate system and a set of geoms that represent data points
+* To display data values, map variables in the data set to aesthetic properties of the geom like size, color, and x and y locations.
+
+## Setup
+```{r}
+if(!require("ggplot2")){
+  install.packages("ggplot2")
+}
+if(!require("ggthemes")){
+  install.packages("ggthemes")
+}
+
+library(ggplot2)
+library(ggthemes)
+```
+
+## Example1
+We would like to plot carat vs price in the diamonds dataset. No transformation is needed. We would liek to pepresent it by points
+
+### Recall:
+- geom is a geometrical object used to represent data in a plot: points, lines, bins
+- aes is the visual property of the objects in the plot. i.e. something you can see, examples: position, shape, size, color etc
+
+```{r}
+a<-ggplot(diamonds, aes(x=carat, y=price))+
+    geom_point()+
+    ggtitle("Diamond")
+a
+```
+
+We can use two aesthetic properties to represent one feature of the data so as to emphasize it. Here we decorate the point using different colors according to its carat. 
+```{r}
+b<-a + facet_wrap(~cut)
+b
+c<-ggplot(diamonds)+
+    geom_point(aes(x=carat, y=price,color=cut))+
+    ggtitle("Diamond")
+c
+```
+
+
+Personalize your plot
+```{r}
+d<-c+theme_economist() + scale_colour_economist() +
+  scale_y_continuous(position = "right")
+d
+```
+
+Add another layer of our prediction/calculated statistics
+```{r}
+pred <- predict(lm(price ~ carat, data = diamonds))
+e<-a + 
+  geom_point(aes(colour = carat)) +
+  geom_line(aes(y=pred))
+e
+```
+
+Our prediction doesn't look good.
+To better see the pattern of the data, we can use geom_smooth
+By default, the ggplot chooses a method to fit the data based on the size of the data and then draw 95% confidence level interval for predictions
+```{r}
+f<-a + 
+  geom_point(aes(colour = carat)) +
+  geom_smooth()+
+  theme_economist()
+
+ggplot(diamonds,aes(x=carat, y=depth))+
+  geom_line()+
+  geom_smooth()+
+  theme_economist()
+
+```
+
+## Example 2
+
+Stack bar plot
+```{r}
+ggplot(diamonds, aes(x = clarity, fill = cut)) +
+  geom_bar() +
+  scale_fill_brewer() +
+  theme_economist()+
+  ggtitle("Diamond")
+```
+
+## Example 3
+
+Violin Plot
+```{r}
+ggplot(diamonds,aes(x=cut,y=price))+
+  geom_violin(scale="area",aes(color=cut))+
+  theme_solarized() +
+  scale_colour_solarized("blue")+
+  ggtitle("Price-Cut Violin Plot")
+```
+
+## Example 4
+
+Plot two datasets together
+```{r}
+df1<-diamonds[,c("cut","price")]
+df2<-diamonds$cut
+
+ggplot()+
+  geom_violin(data=df1,aes(x=cut,y=price))+
+  geom_bar(data=data.frame(table(df2)),stat="identity",aes(x=df2,y=Freq))+
+  theme_solarized() +
+  scale_colour_solarized("blue")+
+  ggtitle("Price-Cut Violin Plot")
+```
+
