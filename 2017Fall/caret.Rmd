@@ -1,0 +1,65 @@
+---
+title: "caret"
+author: "Yue Jin"
+date: "11/8/2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+The caret package is a set of tools for building machine learning models in R. The name “caret” stands for Classification And REgression Training. As the name implies, the caret package gives you a toolkit for building classification models and regression models. Moreover, caret provides you with essential tools for:
+
+There are many different modeling functions in R. Some have different syntax for model training and/or prediction. The package started off as a way to provide a uniform interface the functions themselves, as well as a way to standardize common tasks (such parameter tuning and variable importance).
+
+
+```{r setup, include=FALSE}
+data(mtcars)
+require(caret)
+```
+
+
+One of the primary tools in the package is the train function which can be used to
+- evaluate, using resampling, the effect of model tuning parameters on performance
+- choose the “optimal” model across these parameters
+- estimate model performance from a training set
+
+
+```{r cars}
+summary(mtcars)
+ind<-sample(1:nrow(mtcars),0.75*nrow(mtcars))
+ind<-createDataPartition(
+  y=mtcars$wt,
+  ## the outcome data are needed
+  p = .75,
+  ## The percentage of data in the training set
+  list = FALSE
+  ## The format of the results
+  )
+mtcars_train<-mtcars[ind,]
+mtcars_test<-mtcars[-ind,]
+# create training index
+
+# train(formula, dataset, method)
+mtcarsFit <- train(mpg ~ wt,
+                         mtcars_train,
+                         method = "lm",
+                         ## Center and scale the predictors for the training
+                         preProc = c("center", "scale")
+                        )
+c <- coef(mtcarsFit$finalModel)[1]
+b <- coef(mtcarsFit$finalModel)[2]
+
+```
+
+Other customization:
+However, we would probably like to customize it in a few ways:
+- tuning grid/parameter search method
+- the type of resampling used. The simple bootstrap is used by default. We can use cross validation
+- the methods for measuring performance. If unspecified, overall accuracy and the Kappa statistic are computed. For regression models, root mean squared error and R2 are computed.
+
+# Prediction
+```{r}
+pred <- predict(mtcarsFit, newdata = mtcars_test)
+pred
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
